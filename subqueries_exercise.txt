@@ -1,0 +1,49 @@
+/*1. Display the titles of books whose price is above average. Also
+show the average price of the displayed book.*/
+select titles.title,titles.price from titles group by titles.title,titles.price having sum(price)>( SELECT AVG(titles.price)
+FROM titles )
+
+/*2. Display the average price of books priced above the average
+price of all books. */
+select avg(price) as average from titles where price>(select avg(price) from titles)
+/*3. Display book "types" of which at least one price of the books 
+that comprise them is greater than the average price of all
+titles.
+*/
+select  titles.type from titles group by titles.type having sum(price)>( SELECT AVG(titles.price)
+FROM titles )
+/*4. Display book "types" of which at least one price of the books of
+which they are composed is higher than the average price of the
+books, and whose title begins with the letter "o".*/
+select titles.type from titles group by titles.type,title having sum(price)>( SELECT AVG(titles.price)
+FROM titles  where titles.title like 'o%')
+
+/*5. Display the titles of all books which has never been sold. Use
+the EXISTS clause)*/
+select titles.title from titles WHERE NOT EXISTS(select title_id from sales where titles.title_id=sales.title_id)
+
+/*6. Which publishers have at least one published book that has
+received an advance payment over $ 10,000?*/
+select publishers.pub_name from publishers join titles on titles.pub_id=publishers.pub_id where titles.advance>10000
+/*7. Display the books sold and their quantity for each city in the
+state of California and Washington. Use a subquery.
+*/
+select titles.title_id,titles.title,stores.state,sales.qty from titles join sales on sales.title_id=titles.title_id 
+join stores on stores.stor_id=sales.stor_id  where stores.state='CA'or stores.state= 'WA'
+
+/*8. Display the quantity of books sold in each city in the state of
+Washington.
+*/
+select stores.city,stores.state,sum(sales.qty) as 'Quantity' from sales join stores on sales.stor_id=stores.stor_id where stores.state= 'WA' group by stores.city,stores.state 
+/*9. For each employee with a job_lvl > 200, display the publisher
+they work for, their name, and their job_lvl. */
+select publishers.pub_name,employee.fname,employee.job_lvl from employee join publishers on employee.pub_id=publishers.pub_id where employee.job_lvl>200
+/*10. Find the most expensive book(s).*/
+select TOP 1 titles.title,titles.price as 'price' from titles order by price desc
+/*11. Find the book(s) with the highest advance payment.*/
+select TOP 1 titles.title,titles.advance as 'advance' from titles order by advance desc
+/*12. Which class (job_id) of employee has the greatest number of
+employees with that id? Display the job_id and the number of
+employees with that id. */
+
+select  TOP 1 employee.job_id,count(*) as 'number of employee' from employee group by employee.job_id order by count(*) desc

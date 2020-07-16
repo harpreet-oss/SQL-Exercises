@@ -1,0 +1,205 @@
+use pubs;
+
+--question 1
+select
+pub_name as Publisher
+,lname as 'Last Name'
+,fname as 'First Name'
+,job_desc 
+from 
+employee emp
+join publishers pub
+on emp.pub_id = pub.pub_id
+join Jobs job
+on emp.job_id = job.job_id
+order by 1
+
+--question 2
+select
+title
+,stor_name as Store
+,city
+,state
+from  titles title
+join sales sale
+on title.title_id = sale.title_id
+join stores store
+on sale.stor_id =store.stor_id
+order by 1
+
+--question 3
+
+select 
+au_fname +' '+au_lname as author
+, title
+from authors auth
+join titleauthor titleauth
+on auth.au_id =titleauth.au_id
+join titles title
+on titleauth.title_id =title.title_id
+order by 1
+
+
+--Question 4
+select 
+au_fname 
+,au_lname
+,count(title_id) as number
+from authors auth
+join titleauthor titleauth
+on auth.au_id =titleauth.au_id
+group by au_fname,au_lname
+having count(title_id) >= 1
+
+--question 5
+
+select 
+title
+,pub_name as Publisher
+,au_lname +' '+substring(au_fname,1,1)+'.' as author
+ 
+from authors auth
+join titleauthor titleauth
+on auth.au_id =titleauth.au_id
+join titles title
+on titleauth.title_id =title.title_id
+join publishers pub
+on title.pub_id = pub.pub_id
+order by 1
+
+--question 6
+
+select
+stor_name as 'last name du Store'
+,city
+,state
+,title
+,qty as 'Livers vendus'
+from stores store
+join sales sale
+on store.stor_id = sale.stor_id
+join titles title
+on sale.title_id = title.title_id
+where state='WA'
+order by 1 desc, 5 asc 
+
+--question 7
+
+select
+pub_name
+, title_id
+from publishers pub
+join titles title
+on pub.pub_id = title.pub_id
+where advance >1000
+
+--question 8
+
+select
+pub_name
+,type
+from publishers pub
+join titles title
+on pub.pub_id = title.pub_id
+where type in ('business','psychology')
+group by pub_name,type
+
+
+--question 9
+
+select
+title
+,au_fname
+,au_lname
+
+from authors auth
+join titleauthor titleauth
+on auth.au_id =titleauth.au_id
+join titles title
+on titleauth.title_id =title.title_id
+where au_fname='Albert' and au_lname ='Ringer'
+
+--question 10
+
+select
+pub_name
+,count(emp_id) as 'number of employees'
+from publishers pub
+join employee emp
+on pub.pub_id = emp.pub_id
+group by pub_name 
+
+--question 11
+select
+pub_name as 'Publisher Name'
+,count(title_id)as 'Pub. Books'
+,min(price) as minimum
+,max(price) as maximum
+,sum(price) as sum
+,cast (avg(price)as decimal(10,2)) as average
+from publishers pub
+join titles title
+on pub.pub_id = title.pub_id
+group by pub_name
+
+--question 12
+select
+stor_name
+,count(title_id) as 'number of dif. books'
+from stores store
+join sales sale
+on store.stor_id = sale.stor_id
+group by stor_name
+
+
+--question 13
+
+select
+title
+,sum(qty) as 'quantity sold'
+from titles title
+join sales sale
+on title.title_id = sale.title_id
+group by title
+having sum(qty) < 25
+
+--question 14
+
+select
+
+pub_name as publisher
+,max(advance) as 'Largest Payment'
+from publishers pub
+join titles title
+on pub.pub_id = title.pub_id
+group by pub_name
+
+--question 15
+
+select
+au_lname +' '+au_fname as author
+from authors auth
+left join  titleauthor titleauth
+on auth.au_id = titleauth.au_id
+where title_id is null
+
+--question 16
+
+select
+title
+,coalesce(sum(qty),0)as 'Number of books sold'
+from titles title
+left join sales sale
+on title.title_id = sale.title_id
+group by title
+
+--question 17
+
+
+select
+stor_name as Store
+,sum(qty) as 'Number of books sold'
+from stores store
+join sales sale
+on store.stor_id = sale.stor_id
+group by stor_name
